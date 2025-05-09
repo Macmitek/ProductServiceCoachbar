@@ -3,7 +3,9 @@ package com.example.productmanagementservice.service;
 import com.example.productmanagementservice.model.Product;
 import com.example.productmanagementservice.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +29,30 @@ public class ProductService {
     }
 
     public Product updateProduct(String id, Product product) {
-        product.setId(id);
-        return productRepository.save(product);
+        // First, check if the product exists
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+        }
+
+        // Update the product with the new values
+        Product updatedProduct = existingProduct.get();
+        updatedProduct.setName(product.getName()); // Update product name
+        updatedProduct.setDescription(product.getDescription()); // Update description
+        updatedProduct.setPrice(product.getPrice()); // Update price
+        updatedProduct.setQuantity(product.getQuantity()); // Update quantity
+
+        return productRepository.save(updatedProduct); // Save and return updated product
     }
 
     public void deleteProduct(String id) {
-        productRepository.deleteById(id);
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+        }
+
+        productRepository.deleteById(id); // Delete product
     }
 }

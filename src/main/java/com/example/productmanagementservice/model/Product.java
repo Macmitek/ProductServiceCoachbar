@@ -1,5 +1,11 @@
 package com.example.productmanagementservice.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,13 +17,30 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 public class Product {
+
     @Id
     private String id;
 
+    @NotBlank(message = "Product name is required")
     private String name;
+
     private String description;
-    private double price;
-    private int quantity;
+
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price must be non-negative")
+    private Double price;
+
+    @NotNull(message = "Quantity is required")
+    @Min(value = 0, message = "Quantity must be non-negative")
+    private Integer quantity;
+
+//    @Id
+//    private String id;
+//
+//    private String name;
+//    private String description;
+//    private double price;
+//    private int quantity;
 
     public String getId() {
         return id;
